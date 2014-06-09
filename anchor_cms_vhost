@@ -1,0 +1,45 @@
+server {
+	listen       80;
+        server_name  yourdomaine.com;
+        root         /home/you;
+
+        # Static
+        location / {
+            index  index.html index.htm index.php;
+        }
+	
+	
+	 location /blog/ {
+                 try_files $uri $uri/ /blog/index.php;
+            index  index.html index.htm index.php;
+        }
+        
+        # PHP scripts -> PHP-FPM server listening on 127.0.0.1:9000
+        location ~ \.php$ {
+                  
+                try_files $uri =404;
+
+                 fastcgi_pass unix:/var/run/php5-fpm.sock;
+                 fastcgi_index  index.php;
+                 include fastcgi_params;
+                 fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        }
+
+        # Security
+        location ~ /\.ht {
+            deny  all;
+        }
+
+	# Stuffs
+	location = /favicon.ico {
+		access_log	 off;
+		return	 204;
+	}
+
+	location ~* ^.+\.(jpg|jpeg|gif|css|png|js|xml)$ {
+		expires 	30d;
+		#access_log	off;
+		#set		$memcached_key $uri;
+		#memcached_pass 	127.0.0.1:11211;
+	}
+}
