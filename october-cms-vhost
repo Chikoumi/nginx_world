@@ -1,0 +1,50 @@
+server {
+    listen       80;
+    server_name  you.tld;
+    root         /home/site;
+# Static
+        location / {
+            index  index.html index.htm index.php;
+            try_files $uri $uri/ @extensionless-php;
+        }
+     
+        location @extensionless-php {
+           rewrite ^(.*)$ $1.php last;
+        }
+
+        location ~ \.php$ {
+                 try_files $uri =404;
+                 fastcgi_pass unix:/var/run/php5-fpm.sock;
+                 fastcgi_index  index.php;
+                 include fastcgi_params;
+                 fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        }
+
+        location ~ /\.ht {
+            deny  all;
+        }
+
+      location = /favicon.ico {
+          access_log   off;
+          return   204;
+      }
+
+    location ~* ^.+\.(jpg|jpeg|gif|css|png|js|xml)$ {
+        expires     30d;
+        #access_log off;
+        #set        $memcached_key $uri;
+        #memcached_pass     127.0.0.1:11211;
+    }
+
+#Here is the rewrite need by October cms 
+
+    if (!-e $request_filename)
+{
+    rewrite ^/(.*)$ /index.php?/$1 break;
+    break;
+}
+rewrite themes/.*/(layouts|pages|partials)/.*.htm /index.php break;
+rewrite uploads/protected/.* /index.php break;
+rewrite ^/blog/index.php/articles/installation-de-craftmycms-ioncube-jsonapi-curl http://chikoumi.com/blog/post/installation-craftmycms-serveur-dedie permanent;
+}
+
