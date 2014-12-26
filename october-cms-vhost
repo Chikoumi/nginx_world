@@ -45,6 +45,5 @@ server {
 }
 rewrite themes/.*/(layouts|pages|partials)/.*.htm /index.php break;
 rewrite uploads/protected/.* /index.php break;
-rewrite ^/blog/index.php/articles/installation-de-craftmycms-ioncube-jsonapi-curl http://chikoumi.com/blog/post/installation-craftmycms-serveur-dedie permanent;
 }
 
